@@ -30,6 +30,16 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 
+app.get('/info', (req, res) => {
+    let phoneBookSize = persons.length
+    let currentTime = new Date()
+
+    let stringToReturn = `<p>Phonebook has info for ${phoneBookSize} people</p>`
+    stringToReturn += `<p>${currentTime}</p>`
+
+    res.send(stringToReturn)
+})
+
 const generateId = () => {
   const maxId = persons.length > 0
     ? Math.max(...persons.map(n => n.id))
