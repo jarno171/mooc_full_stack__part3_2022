@@ -41,10 +41,8 @@ app.get('/info', (req, res) => {
 })
 
 const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(n => n.id))
-    : 0
-  return maxId + 1
+  /* This seems nonsensical??? */
+  return Math.floor(Math.random() * 1000000000)
 }
 
 app.post('/api/persons', (request, response) => {
