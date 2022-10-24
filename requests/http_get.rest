@@ -1,13 +1,12 @@
-GET http://localhost:3001/api/notes
+GET http://localhost:3001/api/persons
 
 ###
 
-POST http://localhost:3001/api/notes/ HTTP/1.1
+POST http://localhost:3001/api/persons/ HTTP/1.1
 content-type: application/json
 
 {
-    "id": 4,
-    "content": "just testing",
-    "date": "2022-01-10T19:20:14.298Z",
-    "important": false
+    "id": 5,
+    "name": "jarno",
+    "number": "123"
 }
