@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/jarno171/mooc_full_stack__part3_2022#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
