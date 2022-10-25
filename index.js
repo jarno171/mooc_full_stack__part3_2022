@@ -29,13 +29,19 @@ let persons = [
 app.use(express.json())
 
 const morganCustom = morgan(function (tokens, req, res) {
+  let bodyToShow = ""
+
+  if (tokens.method(req, res) === "POST") {
+    bodyToShow = JSON.stringify(req.body)
+  }
+
   return [
     tokens.method(req, res),
     tokens.url(req, res),
     tokens.status(req, res),
     tokens.res(req, res, 'content-length'), '-',
     tokens['response-time'](req, res), 'ms',
-    JSON.stringify(req.body)
+    bodyToShow
   ].join(' ')
 })
 
