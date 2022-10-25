@@ -1,5 +1,6 @@
 const express = require('express')
-var morgan = require('morgan')
+const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 
@@ -46,6 +47,7 @@ const morganCustom = morgan(function (tokens, req, res) {
 })
 
 app.use(morganCustom)
+app.use(cors())
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
@@ -62,8 +64,10 @@ app.get('/info', (req, res) => {
 })
 
 const generateId = () => {
-  /* This seems nonsensical??? */
-  return Math.floor(Math.random() * 1000000000)
+  const maxId = persons.length > 0
+    ? Math.max(...persons.map(n => n.id))
+    : 0
+  return maxId + 1
 }
 
 app.post('/api/persons', (request, response) => {
@@ -88,6 +92,16 @@ app.post('/api/persons', (request, response) => {
   response.json(person)
 })
 
+// update existing
+app.post('/api/persons/:id', (request, response) => {
+  // just update phone number
+  persons = persons.map(person => {
+    return person.id === Number(request.params.id) ? {...person, number: request.body.number}: person
+  })
+
+  response.json(persons.find(person => person.id === Number(request.params.id)))
+})
+
 app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
@@ -110,7 +124,8 @@ app.get('/api/persons/:id', (request, response) => {
   }
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
