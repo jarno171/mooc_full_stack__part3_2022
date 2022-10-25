@@ -48,10 +48,13 @@ const morganCustom = morgan(function (tokens, req, res) {
 
 app.use(morganCustom)
 app.use(cors())
+app.use(express.static('build'))
 
+/*
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
+*/
 
 app.get('/info', (req, res) => {
     let phoneBookSize = persons.length
