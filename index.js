@@ -1,31 +1,26 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
+const dotenv = require('dotenv');
+
+// read .env file
+dotenv.config();
 
 const app = express()
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+const apiKey = process.env.MONGODB_API_KEY
+
+const url = `mongodb+srv://fullstack:${apiKey}@cluster0.ex0257f.mongodb.net/?retryWrites=true&w=majority`
+
+mongoose.connect(url)
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+})
+
+const Person = mongoose.model('Person', personSchema)
 
 app.use(express.json())
 
@@ -49,12 +44,6 @@ const morganCustom = morgan(function (tokens, req, res) {
 app.use(morganCustom)
 app.use(cors())
 app.use(express.static('build'))
-
-/*
-app.get('/', (req, res) => {
-  res.send('<h1>Hello World!</h1>')
-})
-*/
 
 app.get('/info', (req, res) => {
     let phoneBookSize = persons.length
@@ -106,7 +95,10 @@ app.post('/api/persons/:id', (request, response) => {
 })
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person.find({})
+    .then(persons => {
+      res.json(persons)
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
