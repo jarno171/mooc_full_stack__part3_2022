@@ -9,29 +9,49 @@ const password = process.argv[2]
 
 const url = `mongodb+srv://fullstack:${password}@cluster0.ex0257f.mongodb.net/?retryWrites=true&w=majority`
 
-const noteSchema = new mongoose.Schema({
-  content: String,
-  date: Date,
-  important: Boolean,
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
 })
 
-const Note = mongoose.model('Note', noteSchema)
+const Person = mongoose.model('Person', personSchema)
 
-mongoose
-  .connect(url)
-  .then((result) => {
-    console.log('connected')
+const addPerson = ({name, number}) => {
+  mongoose
+    .connect(url)
+    .then((result) => {
 
-    const note = new Note({
-      content: 'HTML is Easy',
-      date: new Date(),
-      important: true,
+      const person = new Person({
+        name: name,
+        number: number
+      })
+
+      return person.save()
     })
+    .then(() => {
+      return mongoose.connection.close()
+    })
+    .catch((err) => console.log(err))
+}
 
-    return note.save()
-  })
-  .then(() => {
-    console.log('note saved!')
-    return mongoose.connection.close()
-  })
-  .catch((err) => console.log(err))
+const findAll = () => {
+  mongoose.connect(url)
+
+  Person.find({})
+    .then(result => {
+      console.log("phonebook:")
+      result.forEach(person => {
+        console.log(`${person.name} ${person.number}`)
+      })
+      mongoose.connection.close()
+    })
+}
+
+//addPerson({name: "Nasu", number: "123"})
+// no check for correct amount of args..
+if (process.argv.length > 3) {
+  addPerson({name: process.argv[3], number: process.argv[4]})
+  console.log(`added ${process.argv[3]} number ${process.argv[4]} to phonebook`)
+} else {
+  findAll()
+}
