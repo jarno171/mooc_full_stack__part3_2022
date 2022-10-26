@@ -1,0 +1,22 @@
+{
+  "name": "mooc_full_stack_part3_2022",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mongo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jarno171/mooc_full_stack__part3_2022.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jarno171/mooc_full_stack__part3_2022/issues"
+  },
+  "homepage": "https://github.com/jarno171/mooc_full_stack__part3_2022#readme",
+  "dependencies": {
+    "mongoose": "^6.7.0"
+  }
+}
