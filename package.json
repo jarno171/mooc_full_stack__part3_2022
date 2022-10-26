@@ -6,7 +6,12 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon -L index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui": "rm -rf build && cd phonebook_ui/ && npm install && npm run build && cp -r build ../",
+    "build": "npm run build:ui",
+    "deploy": "fly deploy",
+    "deploy:full": "npm run build && npm run deploy",
+    "logs:prod": "fly logs"
   },
   "repository": {
     "type": "git",
@@ -25,5 +30,6 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
-  }
+  },
+  "proxy": "http://localhost:3001"
 }
