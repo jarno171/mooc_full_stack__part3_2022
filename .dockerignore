@@ -1,5 +1,0 @@
-Dockerfile
-.dockerignore
-node_modules
-phonebook_ui/node_modules
-.git
