@@ -9,8 +9,6 @@ const Person = require('./models/person');
 
 const app = express()
 
-app.use(express.json())
-
 const morganCustom = morgan(function (tokens, req, res) {
   let bodyToShow = ""
 
@@ -28,9 +26,26 @@ const morganCustom = morgan(function (tokens, req, res) {
   ].join(' ')
 })
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+// load middleware
+app.use(express.static('build'))
+app.use(express.json())
 app.use(morganCustom)
 app.use(cors())
-app.use(express.static('build'))
+
 
 app.get('/info', (req, res) => {
     let phoneBookSize = persons.length
@@ -76,27 +91,48 @@ app.post('/api/persons/:id', (request, response) => {
     })
 })
 
-app.get('/api/persons', (req, res) => {
+// update existing
+app.put('/api/persons/:id', (request, response) => {
+  // just update phone number
+
+  Person.findByIdAndUpdate(request.params.id, {number: request.body.number}, {new: true})
+    .then(person => {
+      response.json(person)
+    })
+})
+
+app.get('/api/persons', (request, response) => {
   Person.find({})
     .then(persons => {
-      res.json(persons)
+      response.json(persons)
     })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
   Person
-    .findById(request.params.id)
-    .deleteOne(() => {
+    .findByIdAndRemove(request.params.id)
+    .then(result => {
       response.status(204).end()
     })
+    .catch(error => next(error))
 })
 
 
 app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id).then(person => {
-    response.json(person)
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
   })
+  .catch(error => next(error))
 })
+
+// middleware in case of problems
+app.use(unknownEndpoint)
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 

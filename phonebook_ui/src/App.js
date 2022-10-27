@@ -97,7 +97,7 @@ const App = () => {
         }
 
         /* First update in backend, then in frontend */
-        PersonService.update(oldPerson.id, nameObject)
+        PersonService.updatePut(oldPerson.id, nameObject)
           .then(response => {
             /* Now update frontend */
             const oldPersonIndex = persons.findIndex(person => person.name === newName)

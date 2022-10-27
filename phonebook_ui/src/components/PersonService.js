@@ -17,6 +17,11 @@ const update = (id, newObject) => {
     return request.then(response => response.data)
 }
 
+const updatePut = (id, newObject) => {
+    const request = axios.put(`${baseUrl}/${id}`, newObject)
+    return request.then(response => response.data)
+}
+
 const remove = (id) => {
     const request = axios.delete(`${baseUrl}/${id}`)
     return request.then(response => response)
@@ -26,6 +31,7 @@ const createdFunctions = {
     getAll: getAll, 
     create: create, 
     update : update,
+    updatePut: updatePut,
     remove: remove
 }
 
