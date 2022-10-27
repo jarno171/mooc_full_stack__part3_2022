@@ -3,3 +3,4 @@ Dockerfile
 node_modules
 phonebook_ui/node_modules
 .git
+.env
