@@ -81,12 +81,16 @@ const App = () => {
           setPersons(persons.concat(nameObject))
           setNewName('')
           setNewPhoneNumber('')
+
+          updateNotification(`Added new person ${newName}`)
         })
         .catch(error => {
           console.log(error.response.data.error)
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
-
-      updateNotification(`Added new person ${newName}`)
     }
     /* Update phonenumber */
     else {
@@ -119,11 +123,10 @@ const App = () => {
           })
           .catch(error => {
             console.log(error)
-            setErrorMessage(`Person '${oldPerson.name}' was already removed from server`)
+            setErrorMessage(`Person '${oldPerson.name}' could not be updated`)
             setTimeout(() => {
               setErrorMessage(null)
             }, 5000)
-            setPersons(persons.filter(person => person.name !== newName))
           })
       }
     }
