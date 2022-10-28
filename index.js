@@ -4,15 +4,15 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 
 // read .env file
-dotenv.config();
-const Person = require('./models/person');
+dotenv.config()
+const Person = require('./models/person')
 
 const app = express()
 
 const morganCustom = morgan(function (tokens, req, res) {
-  let bodyToShow = ""
+  let bodyToShow = ''
 
-  if (tokens.method(req, res) === "POST") {
+  if (tokens.method(req, res) === 'POST') {
     bodyToShow = JSON.stringify(req.body)
   }
 
@@ -32,24 +32,6 @@ app.use(express.json())
 app.use(morganCustom)
 app.use(cors())
 
-
-app.get('/info', (req, res) => {
-    let phoneBookSize = persons.length
-    let currentTime = new Date()
-
-    let stringToReturn = `<p>Phonebook has info for ${phoneBookSize} people</p>`
-    stringToReturn += `<p>${currentTime}</p>`
-
-    res.send(stringToReturn)
-})
-
-const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(n => n.id))
-    : 0
-  return maxId + 1
-}
-
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
@@ -61,14 +43,14 @@ app.post('/api/persons', (request, response, next) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 // update existing
 app.post('/api/persons/:id', (request, response) => {
   // just update phone number
 
-  Person.findByIdAndUpdate(request.params.id, {number: request.body.number}, {new: true})
+  Person.findByIdAndUpdate(request.params.id, { number: request.body.number }, { new: true })
     .then(person => {
       response.json(person)
     })
@@ -78,7 +60,7 @@ app.post('/api/persons/:id', (request, response) => {
 app.put('/api/persons/:id', (request, response, next) => {
   // just update phone number
 
-  Person.findByIdAndUpdate(request.params.id, {number: request.body.number}, {new: true, runValidators: true, context: 'query'})
+  Person.findByIdAndUpdate(request.params.id, { number: request.body.number }, { new: true, runValidators: true, context: 'query' })
     .then(person => {
       response.json(person)
     })
@@ -92,17 +74,17 @@ app.get('/api/persons', (request, response) => {
     })
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person
     .findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
 })
 
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
     .then(person => {
       if (person) {
@@ -110,8 +92,8 @@ app.get('/api/persons/:id', (request, response) => {
       } else {
         response.status(404).end()
       }
-  })
-  .catch(error => next(error))
+    })
+    .catch(error => next(error))
 })
 
 
