@@ -73,12 +73,18 @@ const App = () => {
         id: newPersonId
       }
 
-      setPersons(persons.concat(nameObject))
-      setNewName('')
-      setNewPhoneNumber('')
-
       // add new person to backend
-      PersonService.create(nameObject)
+      PersonService
+        .create(nameObject)
+        .then(() => {
+          /* Now update frontend */
+          setPersons(persons.concat(nameObject))
+          setNewName('')
+          setNewPhoneNumber('')
+        })
+        .catch(error => {
+          console.log(error.response.data.error)
+        })
 
       updateNotification(`Added new person ${newName}`)
     }

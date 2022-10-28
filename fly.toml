@@ -1,6 +1,6 @@
-# fly.toml file generated for purple-forest-4651 on 2022-10-25T15:39:16Z
+# fly.toml file generated for wandering-sunset-26 on 2022-10-28T15:25:32Z
 
-app = "purple-forest-4651"
+app = "wandering-sunset-26"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []

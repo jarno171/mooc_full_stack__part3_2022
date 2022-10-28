@@ -26,20 +26,6 @@ const morganCustom = morgan(function (tokens, req, res) {
   ].join(' ')
 })
 
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  }
-
-  next(error)
-}
-
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
-
 // load middleware
 app.use(express.static('build'))
 app.use(express.json())
@@ -64,12 +50,8 @@ const generateId = () => {
   return maxId + 1
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
-
-  if (body.name === undefined) {
-    return response.status(404).json({ error: 'name missing' })
-  }
 
   const person = new Person({
     name: body.name,
@@ -79,6 +61,7 @@ app.post('/api/persons', (request, response) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
+  .catch(error => next(error))
 })
 
 // update existing
@@ -92,13 +75,14 @@ app.post('/api/persons/:id', (request, response) => {
 })
 
 // update existing
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
   // just update phone number
 
-  Person.findByIdAndUpdate(request.params.id, {number: request.body.number}, {new: true})
+  Person.findByIdAndUpdate(request.params.id, {number: request.body.number}, {new: true, runValidators: true, context: 'query'})
     .then(person => {
       response.json(person)
     })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons', (request, response) => {
@@ -130,7 +114,24 @@ app.get('/api/persons/:id', (request, response) => {
   .catch(error => next(error))
 })
 
+
 // middleware in case of problems
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+
+  next(error)
+}
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
 app.use(unknownEndpoint)
 app.use(errorHandler)
 
